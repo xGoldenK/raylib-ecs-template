@@ -7,13 +7,15 @@
 // types and structure definition
 //--------------------------------------------------------------------------------------
 typedef enum ComponentType {
-	POSITION, DRAW, CONTROLLER, RIGIDBODY
+	POSITION, DRAW, CONTROLLER
 } ComponentType;
 
+// FIXME: remove flight time from this component
 typedef struct PositionComponent {
 	entity_id	id;
 	int			x;
 	int			y;
+	float		flight_time;
 } PositionComponent;
 
 typedef struct DrawComponent {
@@ -24,8 +26,3 @@ typedef struct DrawComponent {
 typedef struct ControllerComponent {
 	entity_id	id;
 } ControllerComponent;
-
-typedef struct RigidbodyComponent {
-	entity_id	id;
-	int			mass;
-} RigidbodyComponent;

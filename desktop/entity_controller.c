@@ -19,5 +19,5 @@ entity_id CreateEntity() {
 }
 
 void DestroyEntity(entity_id id) {
-    if(EntityHasComponent(id, POSITION)) { free(GetEntityComponent(id, POSITION)); }
+    // TODO: implement this
 }

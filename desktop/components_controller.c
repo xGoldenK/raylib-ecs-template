@@ -15,13 +15,12 @@ unsigned int rigidbodies_lenght;
 PositionComponent	positions[MAX_COMPONENTS];
 DrawComponent		drawables[MAX_COMPONENTS];
 ControllerComponent controllables[MAX_COMPONENTS];
-RigidbodyComponent	rigidbodies[MAX_COMPONENTS];
 
 //--------------------------------------------------------------------------------------
 // add component functions
 //--------------------------------------------------------------------------------------
-void AddPositionComponent(entity_id id, int x, int y) {
-	positions[positions_lenght] = (PositionComponent){id, x, y};
+void AddPositionComponent(entity_id id,int x, int y) {
+	positions[positions_lenght] = (PositionComponent){id, x, y, 0};
 	positions_lenght++;
 }
 
@@ -33,11 +32,6 @@ void AddDrawComponent(entity_id id, Texture2D texture) {
 void AddControllerComponent(entity_id id) {
 	controllables[controllables_lenght] = (ControllerComponent){id};
 	controllables_lenght++;
-}
-
-void AddRigidbodyComponent(entity_id id, int mass) {
-	rigidbodies[rigidbodies_lenght] = (RigidbodyComponent){id, mass};
-	rigidbodies_lenght++;
 }
 
 //--------------------------------------------------------------------------------------
@@ -71,14 +65,6 @@ bool EntityHasComponent(entity_id id, ComponentType type) {
 		}
 		break;
 
-	case RIGIDBODY:
-		for(int i = 0; i < rigidbodies_lenght; i++) {
-			if(id != rigidbodies[i].id) { continue; }
-
-			return true;
-		}
-		break;
-
 	}
 
 	return false;
@@ -105,15 +91,9 @@ void* GetEntityComponent(entity_id id, ComponentType type) {
 		}
 		break;
 
-	case RIGIDBODY:
-		for(int i = 0; i < rigidbodies_lenght; i++) {
-			if(id == rigidbodies[i].id) { return &rigidbodies[i]; }
-		}
-		break;
-
 	}
 
-	return false;
+	return NULL;
 }
 
 void* GetComponents(ComponentType type) {
@@ -122,9 +102,22 @@ void* GetComponents(ComponentType type) {
 	case POSITION:		return &positions;
 	case DRAW:			return &drawables;
 	case CONTROLLER:	return &controllables;
-	case RIGIDBODY:		return &rigidbodies;
 
 	}
+
+	return NULL;
+}
+
+entity_id GetEntityId(int index, ComponentType type) {
+	switch(type) {
+
+	case POSITION:		return positions[index].id;
+	case DRAW:			return drawables[index].id;
+	case CONTROLLER:	return controllables[index].id;
+
+	}
+
+	return NULL;
 }
 
 void* GetComponentAtIndex(int index, ComponentType type) {
@@ -133,9 +126,10 @@ void* GetComponentAtIndex(int index, ComponentType type) {
 	case POSITION:		return &positions[index];
 	case DRAW:			return &drawables[index];
 	case CONTROLLER:	return &controllables[index];
-	case RIGIDBODY:		return &rigidbodies[index];
 
 	}
+
+	return NULL;
 }
 
 int GetComponentArrayLenght(ComponentType type) {
@@ -144,7 +138,8 @@ int GetComponentArrayLenght(ComponentType type) {
 	case POSITION:		return positions_lenght;
 	case DRAW:			return drawables_lenght;
 	case CONTROLLER:	return controllables_lenght;
-	case RIGIDBODY:		return rigidbodies_lenght;
 
 	}
+
+	return NULL;
 }

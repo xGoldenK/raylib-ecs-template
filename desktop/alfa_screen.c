@@ -18,6 +18,7 @@ void InitAlfaScreen() {
 
 	AddDrawComponent(entity, LoadTexture("resources/idle.png"));
 	AddPositionComponent(entity, 0, 0);
+	AddControllerComponent(entity);
 
 	AddDrawComponent(entity2, LoadTexture("resources/idle.png"));
 	AddPositionComponent(entity2, 100, 20);

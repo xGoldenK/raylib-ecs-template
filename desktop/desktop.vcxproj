@@ -20,7 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="alfa_screen.c" />
-    <ClCompile Include="components.c" />
     <ClCompile Include="components_controller.c" />
     <ClCompile Include="entity.c" />
     <ClCompile Include="entity_controller.c" />
@@ -35,7 +34,6 @@
     <ClInclude Include="components_controller.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="entity_controller.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="screens.h" />
     <ClInclude Include="systems.h" />
     <ClInclude Include="uuid4.h" />
