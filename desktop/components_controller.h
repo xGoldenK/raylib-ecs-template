@@ -8,12 +8,14 @@
 //--------------------------------------------------------------------------------------
 // global functions
 //--------------------------------------------------------------------------------------
-void  AddPositionComponent		(entity_id id, int x, int y);
-void  AddDrawComponent			(entity_id id, Texture2D texture);
-void  AddControllerComponent	(entity_id id);
+void  AddPositionComponent		(entity_id e_id, int x, int y);
+void  AddDrawComponent			(entity_id e_id, Texture2D texture);
+void  AddControllerComponent	(entity_id e_id, int movement_speed);
+void  AddRigidbodyComponent		(entity_id e_id);
 
-bool		EntityHasComponent		(entity_id id, ComponentType type);
-void*		GetEntityComponent		(entity_id id, ComponentType type);
+void		RequireComponents		(entity_id e_id, ComponentType component_type);
+bool		EntityHasComponent		(entity_id e_id, ComponentType type);
+void*		GetEntityComponent		(entity_id e_id, ComponentType type);
 void*		GetComponents			(ComponentType type);				//NOTE: this function returns a pointer! (correct usage: DrawComponent* d = ...)
 void*		GetComponentAtIndex		(int index, ComponentType type);
 entity_id	GetEntityId				(int index, ComponentType type);

@@ -3,5 +3,7 @@
 //--------------------------------------------------------------------------------------
 // forward declare functions
 //--------------------------------------------------------------------------------------
-void UpdatePositionSystem	();
+void UpdateKeyListener		();
+void UpdateRigidbodySystem	();
+void UpdateControllerSystem ();
 void UpdateDrawSystem		();

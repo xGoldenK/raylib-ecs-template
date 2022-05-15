@@ -19,11 +19,11 @@
     <Filter Include="Header Files\components">
       <UniqueIdentifier>{62a15ec4-c164-44bd-ad2f-85f9713e71d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\screens">
+      <UniqueIdentifier>{f1d63cc5-f7a3-4eae-bda6-71a484cb073a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="alfa_screen.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="components_controller.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -31,9 +31,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="entity_controller.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="logo_screen.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
@@ -47,6 +44,12 @@
     </ClCompile>
     <ClCompile Include="uuid4.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="alfa_screen.c">
+      <Filter>Source Files\screens</Filter>
+    </ClCompile>
+    <ClCompile Include="logo_screen.c">
+      <Filter>Source Files\screens</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

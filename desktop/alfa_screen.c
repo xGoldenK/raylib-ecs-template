@@ -7,28 +7,32 @@
 //--------------------------------------------------------------------------------------
 // local function definition
 //--------------------------------------------------------------------------------------
-entity_id entity;
-entity_id entity2;
-entity_id entity3;
+entity_id character;
+entity_id box;
+entity_id box2;
 
 void InitAlfaScreen() {
-	entity = CreateEntity();
-	entity2 = CreateEntity();
-	entity3 = CreateEntity();
+	character = CreateEntity();
+	box = CreateEntity();
+	box2 = CreateEntity();
 
-	AddDrawComponent(entity, LoadTexture("resources/idle.png"));
-	AddPositionComponent(entity, 0, 0);
-	AddControllerComponent(entity);
+	AddDrawComponent(character, LoadTexture("resources/idle.png"));
+	AddRigidbodyComponent(character);
+	AddControllerComponent(character, 10);
 
-	AddDrawComponent(entity2, LoadTexture("resources/idle.png"));
-	AddPositionComponent(entity2, 100, 20);
+	AddDrawComponent(box, LoadTexture("resources/box.png"));
+	AddPositionComponent(box, 120, 20);
+	AddRigidbodyComponent(box);
 
-	AddDrawComponent(entity3, LoadTexture("resources/idle.png"));
-	AddPositionComponent(entity3, 100, 50);
+	AddDrawComponent(box2, LoadTexture("resources/box.png"));
+	AddPositionComponent(box2, 100, 50);
+	AddRigidbodyComponent(box2);
 }
 
 void UpdateAlfaScreen() {
-	UpdatePositionSystem();
+	UpdateKeyListener();
+	UpdateRigidbodySystem();
+	UpdateControllerSystem();
 }
 
 void DrawAlfaScreen() {
