@@ -21,3 +21,8 @@ entity_id CreateEntity() {
 void DestroyEntity(entity_id e_id) {
     // TODO: implement this
 }
+
+void SetEntityCanJump(entity_id e_id, bool can_jump) {
+    ControllerComponent* controller = GetEntityComponent(e_id, CONTROLLER);
+    controller->can_jump = can_jump;
+}

@@ -9,10 +9,11 @@
 // assign a power of two to the component types in order to use bitwise or to pass multiple enums
 // see RequireComponents in components_controller.c
 typedef enum ComponentType {
-	POSITION	= 1,
-	DRAW		= 2,
-	RIGIDBODY	= 4,
-	CONTROLLER	= 8
+	POSITION		= 1,
+	DRAW			= 2,
+	RIGIDBODY		= 4,
+	CONTROLLER		= 8,
+	BOX_COLLIDER	= 16
 } ComponentType;
 
 typedef struct PositionComponent {
@@ -34,4 +35,12 @@ typedef struct RigidbodyComponent {
 typedef struct ControllerComponent {
 	entity_id	e_id;
 	int			movement_speed;
+	bool		can_jump;
+	bool		can_move;
 } ControllerComponent;
+
+typedef struct BoxCollider {
+	entity_id	e_id;
+	int			width;
+	int			height;
+} BoxCollider;

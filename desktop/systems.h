@@ -7,3 +7,4 @@ void UpdateKeyListener		();
 void UpdateRigidbodySystem	();
 void UpdateControllerSystem ();
 void UpdateDrawSystem		();
+void UpdateCollisionSystem	();

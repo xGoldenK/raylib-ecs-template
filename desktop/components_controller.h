@@ -12,6 +12,7 @@ void  AddPositionComponent		(entity_id e_id, int x, int y);
 void  AddDrawComponent			(entity_id e_id, Texture2D texture);
 void  AddControllerComponent	(entity_id e_id, int movement_speed);
 void  AddRigidbodyComponent		(entity_id e_id);
+void  AddBoxCollider			(entity_id e_id, int width, int height);
 
 void		RequireComponents		(entity_id e_id, ComponentType component_type);
 bool		EntityHasComponent		(entity_id e_id, ComponentType type);
