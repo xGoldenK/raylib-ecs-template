@@ -3,6 +3,8 @@
 #include "raylib.h"
 #include "entity.h"
 
+#define COMPONENTS_LENGHT sizeof(ComponentType) 
+
 //--------------------------------------------------------------------------------------
 // types and structure definition
 //--------------------------------------------------------------------------------------
@@ -13,13 +15,13 @@ typedef enum ComponentType {
 	DRAW			= 2,
 	RIGIDBODY		= 4,
 	CONTROLLER		= 8,
-	BOX_COLLIDER	= 16
+	BOX_COLLIDER	= 16,
 } ComponentType;
 
 typedef struct PositionComponent {
 	entity_id	e_id;
-	int			x;
-	int			y;
+	float		x;
+	float		y;
 } PositionComponent;
 
 typedef struct DrawComponent {
@@ -27,20 +29,24 @@ typedef struct DrawComponent {
 	Texture2D	texture;
 } DrawComponent;
 
+// TODO: separate components based on the system they're used in
+// for example, we might create a movement component to assign speed and jump force
 typedef struct RigidbodyComponent {
 	entity_id	e_id;
+	float		max_speed;
+	float		max_jump_speed;
+	Vector2		current_speed;
 	float		flight_time;
+	int			is_grounded;
+	int			can_move;
 } RigidbodyComponent;
 
 typedef struct ControllerComponent {
 	entity_id	e_id;
-	int			movement_speed;
-	bool		can_jump;
-	bool		can_move;
 } ControllerComponent;
 
 typedef struct BoxCollider {
 	entity_id	e_id;
-	int			width;
-	int			height;
+	float		width;
+	float		height;
 } BoxCollider;

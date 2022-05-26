@@ -24,12 +24,13 @@ BoxCollider			box_colliders[MAX_COMPONENTS];
 //--------------------------------------------------------------------------------------
 // forward declare local functions
 //--------------------------------------------------------------------------------------
+bool IsComponentRequired(ComponentType type_list, ComponentType type_to_check);
 void _logMissingComponent(entity_id e_id, const char* component_name);
 
 //--------------------------------------------------------------------------------------
 // add component functions
 //--------------------------------------------------------------------------------------
-void AddPositionComponent(entity_id e_id, int x, int y) {
+void AddPositionComponent(entity_id e_id, float x, float y) {
 	positions[positions_lenght] = (PositionComponent){e_id, x, y};
 	positions_lenght++;
 }
@@ -39,17 +40,25 @@ void AddDrawComponent(entity_id e_id, Texture2D texture) {
 	drawables_lenght++;
 }
 
-void AddControllerComponent(entity_id e_id, int movement_speed) {
-	controllables[controllables_lenght] = (ControllerComponent){ e_id, movement_speed, false, true };
+void AddControllerComponent(entity_id e_id) {
+	controllables[controllables_lenght] = (ControllerComponent){e_id};
 	controllables_lenght++;
 }
 
-void AddRigidbodyComponent(entity_id e_id) {
-	rigidbodies[rigidbodies_lenght] = (RigidbodyComponent){ e_id };
+void AddRigidbodyComponent(entity_id e_id, float max_speed, float max_jump_speed) {
+	rigidbodies[rigidbodies_lenght] = (RigidbodyComponent){
+		.e_id			= e_id,
+		.max_speed		= max_speed,
+		.max_jump_speed = max_jump_speed,
+		.current_speed  = (Vector2){0, 0},
+		.flight_time	= 0,
+		.is_grounded	= 0,
+		.can_move		= 1
+	};
 	rigidbodies_lenght++;
 }
 
-void AddBoxCollider(entity_id e_id, int width, int height) {
+void AddBoxCollider(entity_id e_id, float width, float height) {
 	box_colliders[box_colliders_lenght] = (BoxCollider){e_id, width, height};
 	box_colliders_lenght++;
 }
@@ -65,6 +74,8 @@ void AddBoxCollider(entity_id e_id, int width, int height) {
 // by using the bitwise AND operator (&).
 // NOTE: this function is called only after the first system update
 // this means that we can add the components to an entity in any order without problems
+
+// TODO: rework this function
 void RequireComponents(entity_id e_id, ComponentType required_types) {
 	// FIXME: move that LoadTexture for the default DrawComponent somewhere else.
 	// we don't want to load a file from the resources each time the function is called
@@ -79,12 +90,12 @@ void RequireComponents(entity_id e_id, ComponentType required_types) {
 	}
 
 	if(IsComponentRequired(required_types, CONTROLLER) && !EntityHasComponent(e_id, CONTROLLER)) {
-		AddControllerComponent(e_id, 10);
+		AddControllerComponent(e_id);
 		_logMissingComponent(e_id, "CONTROLLER_COMPONENT");
 	}
 
 	if(IsComponentRequired(required_types, RIGIDBODY) && !EntityHasComponent(e_id, RIGIDBODY)) {
-		AddRigidbodyComponent(e_id);
+		AddRigidbodyComponent(e_id, 10, 10);
 		_logMissingComponent(e_id, "RIGIDBODY_COMPONENT");
 	}
 

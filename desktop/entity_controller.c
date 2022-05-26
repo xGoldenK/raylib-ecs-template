@@ -22,7 +22,36 @@ void DestroyEntity(entity_id e_id) {
     // TODO: implement this
 }
 
-void SetEntityCanJump(entity_id e_id, bool can_jump) {
-    ControllerComponent* controller = GetEntityComponent(e_id, CONTROLLER);
-    controller->can_jump = can_jump;
+void DrawEntityCollider(entity_id e_id) {
+	PositionComponent* pos = GetEntityComponent(e_id, POSITION);
+	BoxCollider* collider = GetEntityComponent(e_id, BOX_COLLIDER);
+
+    float padding = 1.5;
+
+    // up
+    DrawLine(pos->x - padding,
+             pos->y - padding,
+             pos->x + collider->width,
+             pos->y - padding,
+             RED);
+
+    // left
+	DrawLine(pos->x - padding,
+             pos->y - padding,
+             pos->x - padding,
+             pos->y + collider->height + padding,
+             RED);
+
+    // down
+	DrawLine(pos->x + collider->width + padding,
+             pos->y + collider->height + padding,
+             pos->x - padding,
+             pos->y + collider->height + padding,
+             RED); 
+    // right
+	DrawLine(pos->x + collider->width  + padding,
+             pos->y + collider->height + padding,
+             pos->x + collider->width  + padding,
+             pos->y - padding,
+             RED);
 }
