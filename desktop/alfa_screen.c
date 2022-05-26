@@ -18,7 +18,7 @@ void InitAlfaScreen() {
 
 	// init character
 	AddDrawComponent(character, LoadTexture("resources/idle.png"));
-	AddRigidbodyComponent(character, 10, 10);
+	AddRigidbodyComponent(character, 5, 5);
 	AddControllerComponent(character);
 	AddPositionComponent(character, 0, 40);
 
@@ -28,14 +28,14 @@ void InitAlfaScreen() {
 	// init boxes
 	AddDrawComponent(box, LoadTexture("resources/box.png"));
 	AddPositionComponent(box, 150, 20);
-	AddRigidbodyComponent(box, 0, 10);
+	AddRigidbodyComponent(box, 0, 0);
 
 	DrawComponent* box_draw_c = GetEntityComponent(box, DRAW);
 	AddBoxCollider(box, box_draw_c->texture.width, box_draw_c->texture.height);
 
 	AddDrawComponent(box2, LoadTexture("resources/box.png"));
 	AddPositionComponent(box2, 100, 50);
-	AddRigidbodyComponent(box2, 0, 10);
+	AddRigidbodyComponent(box2, 0, 0);
 
 	DrawComponent* box2_draw_c = GetEntityComponent(box2, DRAW);
 	AddBoxCollider(box2, box2_draw_c->texture.width, box2_draw_c->texture.height);

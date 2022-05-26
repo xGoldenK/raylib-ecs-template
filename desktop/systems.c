@@ -1,13 +1,14 @@
-#include <stdio.h>
+#include <math.h>
 #include "systems.h"
 #include "raylib.h"
 #include "entity_controller.h"
 #include "components_controller.h"
 
 #define GRAVITY_ACCELERATION 4.81
-#define JUMP_ACCELERATION 4
-#define MOVEMENT_ACCELERATION 2
-#define MOVEMENT_FRICTION 1
+#define JUMP_ACCELERATION 10
+#define MOVEMENT_ACCELERATION 10
+#define	MAX_FRICTION 9
+#define FRICTION_ACCELERATION 1
 
 //--------------------------------------------------------------------------------------
 // local variables
@@ -40,7 +41,7 @@ void UpdateRigidbodySystem() {
 		int relative_ground_y = (GetScreenHeight() - collider->height);
 
 		// if the entity is touching the ground
-		if(pos_component->y >= relative_ground_y) {
+		if(pos_component->y > relative_ground_y) {
 			// set y pos at the level of the ground;
 			pos_component->y = relative_ground_y;
 			rb_component->current_speed.y = 0;
@@ -70,32 +71,31 @@ void UpdateRigidbodySystem() {
 		//--------------------------------------------------------------------------------------
 		// x-axis friction
 		//--------------------------------------------------------------------------------------
-		if(rb_component->is_grounded) {
+		// if we're going to the left
+		if(rb_component->current_speed.x < 0) {
+			// apply friction
+			rb_component->current_speed.x += FRICTION_ACCELERATION;
 
-			// if we're going to the left
-			if(rb_component->current_speed.x < 0) {
-				// apply friction
-				rb_component->current_speed.x += MOVEMENT_FRICTION;
+			// BUT, if the last friction tick changed the direction of the entity, we set its speed to 0.
+			// this means that if while applying friction we're causing a movement in the opposite direction,
+			// we stop the movement (otherwise we'd be going the opposite direction to the initial one, while instead we just want to stop)
+			if(rb_component->current_speed.x > 0) { rb_component->current_speed.x = 0; }
 
-				// BUT, if the last friction tick changed the direction of the entity, we set its speed to 0.
-				// this means that if while applying friction we're causing a movement in the opposite direction,
-				// we stop the movement (otherwise we'd be going the opposite direction to the initial one, while instead we just want to stop)
-				if(rb_component->current_speed.x > 0) { rb_component->current_speed.x = 0; }
-			}
-
-			// if we're going right
-			if(rb_component->current_speed.x > 0) {
-				// apply friction
-				rb_component->current_speed.x -= MOVEMENT_FRICTION;
-
-				// BUT, if the last friction tick changed the direction of the entity, we set its speed to 0.
-				// this means that if while applying friction we're causing a movement in the opposite direction,
-				// we stop the movement (otherwise we'd be going the opposite direction to the initial one, while instead we just want to stop)
-				if(rb_component->current_speed.x <  0) { rb_component->current_speed.x = 0; }
-			}
-
+			TraceLog(LOG_INFO, "friction is: %i", FRICTION_ACCELERATION);
 		}
 
+		// if we're going right
+		if(rb_component->current_speed.x > 0) {
+			// apply friction
+			rb_component->current_speed.x -= FRICTION_ACCELERATION;
+
+			// BUT, if the last friction tick changed the direction of the entity, we set its speed to 0.
+			// this means that if while applying friction we're causing a movement in the opposite direction,
+			// we stop the movement (otherwise we'd be going the opposite direction to the initial one, while instead we just want to stop)
+			if(rb_component->current_speed.x < 0) { rb_component->current_speed.x = 0; }
+
+			TraceLog(LOG_INFO, "friction is: %i", FRICTION_ACCELERATION);
+		}
 
 		//--------------------------------------------------------------------------------------
 		// apply movement
@@ -103,9 +103,10 @@ void UpdateRigidbodySystem() {
 		if(rb_component->can_move)	  {
 			pos_component->x += rb_component->current_speed.x;
 			pos_component->y += rb_component->current_speed.y;
+		} else {
+			rb_component->current_speed.x = 0;
+			rb_component->current_speed.y = 0;
 		}
-
-		TraceLog(LOG_INFO, "x:%f y:%f", rb_component->current_speed.x, rb_component->current_speed.y);
 	}
 }
 
@@ -121,7 +122,6 @@ void UpdateCollisionSystem() {
 
 		//--------------------------------------------------------------------------------------
 		// collisions
-		// REQUIRES: BoxCollider & PositionComponent & RigidbodyComponent
 		//--------------------------------------------------------------------------------------
 		// NOTE: we might optimize this by only checking objects which are near the player
 		// 
@@ -195,17 +195,18 @@ void UpdateControllerSystem() {
 
 		//--------------------------------------------------------------------------------------
 		// wasd movement + jumping
-		// REQUIRES: ControllerComponent & PositionComponent
 		//--------------------------------------------------------------------------------------
-		// NOTE: we might have to add dt to the pos calculations
-		// to make them indipendent from the frames
-
-		bool can_move		= rb_component->can_move;
+		float max_speed		= rb_component->max_speed;
+		float current_speed = rb_component->current_speed.x;
 		bool is_grounded	= rb_component->is_grounded;
 
-		if(left_key)  { rb_component->current_speed.x -= MOVEMENT_ACCELERATION; }
-		if(right_key) { rb_component->current_speed.x += MOVEMENT_ACCELERATION; }
-		if(jump_key)  { rb_component->current_speed.y += JUMP_ACCELERATION; }
+		// if we're pressing the right key and the current speed is lower than the max speed
+		// we use fabsf to get the absolute float value of the current speed (since the left direction is negative)
+		if(left_key  && (fabsf(current_speed) < max_speed)) { rb_component->current_speed.x -= MOVEMENT_ACCELERATION; }
+		if(right_key && (fabsf(current_speed) < max_speed)) { rb_component->current_speed.x += MOVEMENT_ACCELERATION; }
+		if(jump_key  && is_grounded) { rb_component->current_speed.y -= JUMP_ACCELERATION; }
+
+		TraceLog(LOG_INFO, "speed is: %f", fabsf(current_speed));
 	}
 }
 
@@ -220,7 +221,6 @@ void UpdateDrawSystem() {
 
 		//--------------------------------------------------------------------------------------
 		// drawing
-		// REQUIRES: DrawComponent & PositionComponent
 		//--------------------------------------------------------------------------------------
 		DrawTexture(draw_component->texture, (int)position_component->x, (int)position_component->y, RAYWHITE);
 	}
