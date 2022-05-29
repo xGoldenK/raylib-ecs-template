@@ -42,10 +42,9 @@ void InitAlfaScreen() {
 }
 
 void UpdateAlfaScreen() {
-	UpdateKeyListener();
+	UpdateControllerSystem();
 	UpdateRigidbodySystem();
 	UpdateCollisionSystem();
-	UpdateControllerSystem();
 }
 
 void DrawAlfaScreen() {

@@ -47,13 +47,13 @@ void AddControllerComponent(entity_id e_id) {
 
 void AddRigidbodyComponent(entity_id e_id, float max_speed, float max_jump_speed) {
 	rigidbodies[rigidbodies_lenght] = (RigidbodyComponent){
-		.e_id			= e_id,
-		.max_speed		= max_speed,
-		.max_jump_speed = max_jump_speed,
-		.current_speed  = (Vector2){0, 0},
-		.flight_time	= 0,
-		.is_grounded	= 0,
-		.can_move		= 1
+		.e_id				= e_id,
+		.max_speed			= (Vector2){max_speed, max_jump_speed},
+		.current_speed		= (Vector2){0, 0},
+		.current_friction	= 0,
+		.flight_time		= 0,
+		.is_grounded		= 0,
+		.can_move			= 1
 	};
 	rigidbodies_lenght++;
 }

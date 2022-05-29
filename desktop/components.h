@@ -33,9 +33,9 @@ typedef struct DrawComponent {
 // for example, we might create a movement component to assign speed and jump force
 typedef struct RigidbodyComponent {
 	entity_id	e_id;
-	float		max_speed;
-	float		max_jump_speed;
+	Vector2		max_speed;
 	Vector2		current_speed;
+	float		current_friction;
 	float		flight_time;
 	int			is_grounded;
 	int			can_move;

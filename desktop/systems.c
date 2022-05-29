@@ -5,56 +5,34 @@
 #include "components_controller.h"
 
 #define GRAVITY_ACCELERATION 4.81
+
+// TODO: move these inside the rigidbody component (?)
+// this way every entity can have a different acceleration/deceleration rate
 #define JUMP_ACCELERATION 10
-#define MOVEMENT_ACCELERATION 10
-#define	MAX_FRICTION 9
+#define MOVEMENT_ACCELERATION 3
+#define	MAX_FRICTION 5
 #define FRICTION_ACCELERATION 1
 
 //--------------------------------------------------------------------------------------
 // local variables
 //--------------------------------------------------------------------------------------
-bool left_key, down_key, right_key, jump_key;
+int jump_key	= KEY_W;
+int left_key	= KEY_A;
+int down_key	= KEY_S;
+int right_key	= KEY_D;
 
 //--------------------------------------------------------------------------------------
 // systems
 //--------------------------------------------------------------------------------------
-void UpdateKeyListener() {
-	left_key	= IsKeyDown(KEY_A);
-	down_key	= IsKeyDown(KEY_S);
-	right_key	= IsKeyDown(KEY_D);
-	jump_key	= IsKeyDown(KEY_SPACE);
-}
 
 void UpdateRigidbodySystem() {
 	for(int i = 0; i < GetComponentArrayLenght(RIGIDBODY); i++) {
 
 		entity_id e_id = GetEntityId(i, RIGIDBODY);
-		RequireComponents(e_id, BOX_COLLIDER | POSITION);
+		RequireComponents(e_id, POSITION);
 
 		RigidbodyComponent* rb_component	= GetEntityComponent(e_id, RIGIDBODY);
-		BoxCollider*		collider		= GetEntityComponent(e_id, BOX_COLLIDER);
 		PositionComponent*	pos_component	= GetEntityComponent(e_id, POSITION);
-
-		//--------------------------------------------------------------------------------------
-		// grounding
-		//--------------------------------------------------------------------------------------
-		int relative_ground_y = (GetScreenHeight() - collider->height);
-
-		// if the entity is touching the ground
-		if(pos_component->y > relative_ground_y) {
-			// set y pos at the level of the ground;
-			pos_component->y = relative_ground_y;
-			rb_component->current_speed.y = 0;
-
-			// reset rb's flight time
-			rb_component->flight_time = 0;
-
-			// entity's grounded
-			rb_component->is_grounded = true;
-		} else {
-			// otherwise, we're not on the ground
-			rb_component->is_grounded = false;
-		}
 
 		//--------------------------------------------------------------------------------------
 		// gravity
@@ -71,36 +49,59 @@ void UpdateRigidbodySystem() {
 		//--------------------------------------------------------------------------------------
 		// x-axis friction
 		//--------------------------------------------------------------------------------------
-		// if we're going to the left
-		if(rb_component->current_speed.x < 0) {
+		// if we were going to the left
+		if(IsKeyUp(left_key) && rb_component->current_speed.x < 0) {
+			// if we're still applying friction in another direction, set it to 0 since we're not moving in that direction anymore
+			if(rb_component->current_friction < 0) { rb_component->current_friction = 0; }
+
+			// keep track of our current friction
+			rb_component->current_friction += FRICTION_ACCELERATION;
+
+			// check if we're inside our bounds
+			// fabsf return the absolute value of a float
+			if(fabsf(rb_component->current_friction) > MAX_FRICTION) { rb_component->current_friction = MAX_FRICTION; }
+
 			// apply friction
-			rb_component->current_speed.x += FRICTION_ACCELERATION;
+			rb_component->current_speed.x += rb_component->current_friction;
 
 			// BUT, if the last friction tick changed the direction of the entity, we set its speed to 0.
 			// this means that if while applying friction we're causing a movement in the opposite direction,
 			// we stop the movement (otherwise we'd be going the opposite direction to the initial one, while instead we just want to stop)
 			if(rb_component->current_speed.x > 0) { rb_component->current_speed.x = 0; }
-
-			TraceLog(LOG_INFO, "friction is: %i", FRICTION_ACCELERATION);
 		}
 
-		// if we're going right
-		if(rb_component->current_speed.x > 0) {
+		// if we were going right
+		if(IsKeyUp(right_key) && rb_component->current_speed.x > 0) {
+			// if we're still applying friction in another direction, set it to 0 since we're not moving in that direction anymore
+			if(rb_component->current_friction > 0) { rb_component->current_friction = 0; }
+
+			// keep track of our current friction
+			rb_component->current_friction -= FRICTION_ACCELERATION;
+
+			// check if we're inside our bounds
+			// fabsf return the absolute value of a float
+			if(fabsf(rb_component->current_friction) > MAX_FRICTION) { rb_component->current_friction = -MAX_FRICTION; }
+
 			// apply friction
-			rb_component->current_speed.x -= FRICTION_ACCELERATION;
+			rb_component->current_speed.x += rb_component->current_friction;
 
 			// BUT, if the last friction tick changed the direction of the entity, we set its speed to 0.
 			// this means that if while applying friction we're causing a movement in the opposite direction,
 			// we stop the movement (otherwise we'd be going the opposite direction to the initial one, while instead we just want to stop)
 			if(rb_component->current_speed.x < 0) { rb_component->current_speed.x = 0; }
-
-			TraceLog(LOG_INFO, "friction is: %i", FRICTION_ACCELERATION);
 		}
+
+		// if we're standing still, set the friction to 0
+		if(rb_component->current_speed.x == 0) {
+			rb_component->current_friction = 0;
+		}
+
 
 		//--------------------------------------------------------------------------------------
 		// apply movement
 		//--------------------------------------------------------------------------------------
 		if(rb_component->can_move)	  {
+			// movement
 			pos_component->x += rb_component->current_speed.x;
 			pos_component->y += rb_component->current_speed.y;
 		} else {
@@ -180,6 +181,27 @@ void UpdateCollisionSystem() {
 			//}
 
 			//DrawEntityCollider(e_id);
+
+			//--------------------------------------------------------------------------------------
+			// grounding
+			//--------------------------------------------------------------------------------------
+			int relative_ground_y = (GetScreenHeight() - box_collider->height);
+
+			// if the entity is touching the ground
+			if(pos_component->y > relative_ground_y) {
+				// set y pos at the level of the ground;
+				pos_component->y = relative_ground_y;
+				rb_component->current_speed.y = 0;
+
+				// reset rb's flight time
+				rb_component->flight_time = 0;
+
+				// entity's grounded
+				rb_component->is_grounded = true;
+			} else {
+				// otherwise, we're not on the ground
+				rb_component->is_grounded = false;
+			}
 		}
 	}
 }
@@ -196,17 +218,29 @@ void UpdateControllerSystem() {
 		//--------------------------------------------------------------------------------------
 		// wasd movement + jumping
 		//--------------------------------------------------------------------------------------
-		float max_speed		= rb_component->max_speed;
-		float current_speed = rb_component->current_speed.x;
-		bool is_grounded	= rb_component->is_grounded;
+		float max_speed		 = rb_component->max_speed.x;
+		float max_jump_speed = rb_component->max_speed.y;
+		float current_speed  = rb_component->current_speed.x;
+		bool  is_grounded	 = rb_component->is_grounded;
 
+		// left and right movement
 		// if we're pressing the right key and the current speed is lower than the max speed
-		// we use fabsf to get the absolute float value of the current speed (since the left direction is negative)
-		if(left_key  && (fabsf(current_speed) < max_speed)) { rb_component->current_speed.x -= MOVEMENT_ACCELERATION; }
-		if(right_key && (fabsf(current_speed) < max_speed)) { rb_component->current_speed.x += MOVEMENT_ACCELERATION; }
-		if(jump_key  && is_grounded) { rb_component->current_speed.y -= JUMP_ACCELERATION; }
+		// fabsf return the absolute value of a float
+		if(IsKeyDown(left_key)  && (fabsf(current_speed) < max_speed)) { rb_component->current_speed.x -= MOVEMENT_ACCELERATION; }
+		if(IsKeyDown(right_key) && (fabsf(current_speed) < max_speed)) { rb_component->current_speed.x += MOVEMENT_ACCELERATION; }
 
-		TraceLog(LOG_INFO, "speed is: %f", fabsf(current_speed));
+		// jumping
+		// check if we're pressing the key and we're grounded
+		if(IsKeyDown(jump_key) && is_grounded) {
+			rb_component->current_speed.y -= JUMP_ACCELERATION;
+
+			// if we're going faster than it's allowed on the y axis, set the jump to the max speed
+			// this is not a problem for movements that happen on the y axis other than the jump, since we
+			// only do this if we're grounded
+			// example: if we're using a jump pad, our speed won't be set to the max speed if it's exceeded,
+			// since we're not grounded while we're flying
+			if(fabsf(rb_component->current_speed.y) > max_jump_speed) { rb_component->current_speed.y = -max_jump_speed; }
+		}
 	}
 }
 
