@@ -16,7 +16,7 @@
 //--------------------------------------------------------------------------------------
 // local variables
 //--------------------------------------------------------------------------------------
-int jump_key	= KEY_W;
+int jump_key	= KEY_SPACE;
 int left_key	= KEY_A;
 int down_key	= KEY_S;
 int right_key	= KEY_D;
@@ -134,53 +134,52 @@ void UpdateCollisionSystem() {
 			// we can just skip this and keep looping
 			if(q == i) { continue; }
 
-			entity_id q_id = GetEntityId(q, BOX_COLLIDER);
-			RequireComponents(q_id, POSITION);
+			entity_id other_entity = GetEntityId(q, BOX_COLLIDER);
+			RequireComponents(other_entity, POSITION);
 
-			BoxCollider* q_box_collider = GetEntityComponent(q_id, BOX_COLLIDER);
-			PositionComponent* q_pos_component = GetEntityComponent(q_id, POSITION);
+			BoxCollider* other_collider = GetEntityComponent(other_entity, BOX_COLLIDER);
+			PositionComponent* other_pos_component = GetEntityComponent(other_entity, POSITION);
 
-			Rectangle q_rect = (Rectangle){
-				q_pos_component->x,
-				q_pos_component->y,
-				q_box_collider->width,
-				q_box_collider->height
+			Rectangle other_rect = (Rectangle){
+				other_pos_component->x,
+				other_pos_component->y,
+				other_collider->width,
+				other_collider->height
 			};
 
-			Rectangle i_rect = (Rectangle){
+			Rectangle entity_rect = (Rectangle){
 				pos_component->x,
 				pos_component->y,
 				box_collider->width,
 				box_collider->height
 			};
 
-			//float speed = rb_component->max_speed;
+			// this rectangle will be null if the two boxes are not already colliding
+			// if they are, it means that the rigidbody update was called before the collision system
+			// so we have to move our entity out of the other one
+			Rectangle current_collision_rect = GetCollisionRec(entity_rect, other_rect);
 
-			//// for each step
+			// TODO: Add collision info
+			// or remove them, I can't currently see any use for them and they only clutter up the component
 
-			//// up
-			//for(int step = 0; step = -speed; step++) {
+			// calculate where our entity is in relation to the other's center
+			// x axis
+			if(pos_component->x + box_collider->width/2 < other_pos_component->x + other_collider->width/2) {
+				pos_component->x -= current_collision_rect.width;
+			} else {
+				pos_component->x += current_collision_rect.width;
+			}
 
-			//}
+			// calculate where our entity is in relation to the other's center
+			// y axis
+			// FIXME: random stuff happens (?)
+			if(pos_component->y < other_pos_component->y) {
+				pos_component->y += current_collision_rect.height;
+			} else {
+				pos_component->y -= current_collision_rect.height;
+			}
 
-			//// left
-			//for(int step = 0; step = -speed; step++) {
-			//	i_rect.x -= 1;
-
-
-			//}
-
-			//// down
-			//for(int step = 0; step = speed; step++) {
-
-			//}
-
-			//// right
-			//for(int step = 0; step = speed; step++) {
-
-			//}
-
-			//DrawEntityCollider(e_id);
+			DrawEntityCollider(e_id);
 
 			//--------------------------------------------------------------------------------------
 			// grounding
@@ -188,7 +187,7 @@ void UpdateCollisionSystem() {
 			int relative_ground_y = (GetScreenHeight() - box_collider->height);
 
 			// if the entity is touching the ground
-			if(pos_component->y > relative_ground_y) {
+			if(pos_component->y >= relative_ground_y) {
 				// set y pos at the level of the ground;
 				pos_component->y = relative_ground_y;
 				rb_component->current_speed.y = 0;

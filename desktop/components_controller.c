@@ -20,28 +20,38 @@ DrawComponent		drawables[MAX_COMPONENTS];
 ControllerComponent controllables[MAX_COMPONENTS];
 RigidbodyComponent  rigidbodies[MAX_COMPONENTS];
 BoxCollider			box_colliders[MAX_COMPONENTS];
+CollisionInfo		collision_infos[MAX_COMPONENTS];
 
 //--------------------------------------------------------------------------------------
 // forward declare local functions
 //--------------------------------------------------------------------------------------
 bool IsComponentRequired(ComponentType type_list, ComponentType type_to_check);
-void _logMissingComponent(entity_id e_id, const char* component_name);
+void WarnMissingComponent(entity_id e_id, const char* component_name);
 
 //--------------------------------------------------------------------------------------
 // add component functions
 //--------------------------------------------------------------------------------------
 void AddPositionComponent(entity_id e_id, float x, float y) {
-	positions[positions_lenght] = (PositionComponent){e_id, x, y};
+	positions[positions_lenght] = (PositionComponent){
+		.e_id = e_id,
+		.x = x,
+		.y = y
+	};
 	positions_lenght++;
 }
 
 void AddDrawComponent(entity_id e_id, Texture2D texture) {
-	drawables[drawables_lenght] = (DrawComponent){e_id, texture};
+	drawables[drawables_lenght] = (DrawComponent){
+		.e_id = e_id,
+		.texture = texture
+	};
 	drawables_lenght++;
 }
 
 void AddControllerComponent(entity_id e_id) {
-	controllables[controllables_lenght] = (ControllerComponent){e_id};
+	controllables[controllables_lenght] = (ControllerComponent){
+		.e_id = e_id
+	};
 	controllables_lenght++;
 }
 
@@ -59,7 +69,19 @@ void AddRigidbodyComponent(entity_id e_id, float max_speed, float max_jump_speed
 }
 
 void AddBoxCollider(entity_id e_id, float width, float height) {
-	box_colliders[box_colliders_lenght] = (BoxCollider){e_id, width, height};
+	box_colliders[box_colliders_lenght] = (BoxCollider){
+		.e_id	= e_id,
+		.width	= width,
+		.height	= height,
+
+		.collision_info = (CollisionInfo) {
+			.is_colliding_down	= 0,
+			.is_colliding_left	= 0,
+			.is_colliding_right = 0,
+			.is_colliding_up	= 0
+		}
+	};
+
 	box_colliders_lenght++;
 }
 
@@ -80,28 +102,23 @@ void RequireComponents(entity_id e_id, ComponentType required_types) {
 	// FIXME: move that LoadTexture for the default DrawComponent somewhere else.
 	// we don't want to load a file from the resources each time the function is called
 	if(IsComponentRequired(required_types, POSITION) && !EntityHasComponent(e_id, POSITION)) {
-		AddPositionComponent(e_id, 0, 0);
-		_logMissingComponent(e_id, "POSITION_COMPONENT");
+		WarnMissingComponent(e_id, "POSITION_COMPONENT");
 	}
 
 	if(IsComponentRequired(required_types, DRAW) && !EntityHasComponent(e_id, DRAW)) {
-		AddDrawComponent(e_id, LoadTexture("resources/default.png"));
-		_logMissingComponent(e_id, "DRAW_COMPONENT");
+		WarnMissingComponent(e_id, "DRAW_COMPONENT");
 	}
 
 	if(IsComponentRequired(required_types, CONTROLLER) && !EntityHasComponent(e_id, CONTROLLER)) {
-		AddControllerComponent(e_id);
-		_logMissingComponent(e_id, "CONTROLLER_COMPONENT");
+		WarnMissingComponent(e_id, "CONTROLLER_COMPONENT");
 	}
 
 	if(IsComponentRequired(required_types, RIGIDBODY) && !EntityHasComponent(e_id, RIGIDBODY)) {
-		AddRigidbodyComponent(e_id, 10, 10);
-		_logMissingComponent(e_id, "RIGIDBODY_COMPONENT");
+		WarnMissingComponent(e_id, "RIGIDBODY_COMPONENT");
 	}
 
 	if(IsComponentRequired(required_types, BOX_COLLIDER) && !EntityHasComponent(e_id, BOX_COLLIDER)) {
-		AddBoxCollider(e_id, 0, 0);
-		_logMissingComponent(e_id, "BOX_COLLIDER");
+		WarnMissingComponent(e_id, "BOX_COLLIDER");
 	}
 }
 
@@ -209,6 +226,7 @@ bool IsComponentRequired(ComponentType type_list, ComponentType type_to_check) {
 	return (type_list & type_to_check);
 }
 
-void _logMissingComponent(entity_id e_id, const char* component_name) {
-	TraceLog(LOG_INFO, "entity \"%s\" was missing - %s", e_id, component_name);
+void WarnMissingComponent(entity_id e_id, const char* component_name) {
+	TraceLog(LOG_WARNING, "entity \"%s\" is missing - %s.", e_id, component_name);
+	TraceLog(LOG_WARNING, "undefined behaviour ahead.");
 }

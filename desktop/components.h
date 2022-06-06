@@ -45,8 +45,16 @@ typedef struct ControllerComponent {
 	entity_id	e_id;
 } ControllerComponent;
 
+typedef struct CollisionInfo {
+	int			is_colliding_up;
+	int			is_colliding_left;
+	int			is_colliding_down;
+	int			is_colliding_right;
+} CollisionInfo;
+
 typedef struct BoxCollider {
-	entity_id	e_id;
-	float		width;
-	float		height;
+	entity_id		e_id;
+	float			width;
+	float			height;
+	CollisionInfo	collision_info;
 } BoxCollider;
