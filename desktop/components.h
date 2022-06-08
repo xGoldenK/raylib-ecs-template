@@ -2,59 +2,66 @@
 
 #include "raylib.h"
 #include "entity.h"
-
-#define COMPONENTS_LENGHT sizeof(ComponentType) 
+#include "physac.h"
 
 //--------------------------------------------------------------------------------------
 // types and structure definition
 //--------------------------------------------------------------------------------------
-// assign a power of two to the component types in order to use bitwise or to pass multiple enums
-// see RequireComponents in components_controller.c
+// TODO: remove this enum
 typedef enum ComponentType {
-	POSITION		= 1,
-	DRAW			= 2,
-	RIGIDBODY		= 4,
-	CONTROLLER		= 8,
-	BOX_COLLIDER	= 16,
+	POSITION, DRAW, CONTROLLABLE, FRICTION, SPEED,
+	GRAVITY, BOX_COLLIDER
 } ComponentType;
 
-typedef struct PositionComponent {
-	entity_id	e_id;
+typedef struct ComponentArray {
+	void* buffer;
+	int capacity;
+	int single_component_size;
+	int first_free_space_index;
+} ComponentArray;
+
+typedef struct ECBase {
+	entity_id		e_id;
+	ComponentType	type;
+} ECBase;
+
+typedef struct ECPosition {
+	ECBase*		base;
 	float		x;
 	float		y;
-} PositionComponent;
+} ECPosition;
 
-typedef struct DrawComponent {
-	entity_id	e_id;
+typedef struct ECDraw {
+	ECBase*		base;
 	Texture2D	texture;
-} DrawComponent;
+} ECDraw;
 
-// TODO: separate components based on the system they're used in
-// for example, we might create a movement component to assign speed and jump force
-typedef struct RigidbodyComponent {
-	entity_id	e_id;
-	Vector2		max_speed;
-	Vector2		current_speed;
+typedef struct ECControllable {
+	ECBase*		base;
+} ECControllable;
+
+typedef struct ECFriction {
+	ECBase*		base;
+	float		max_friction;
 	float		current_friction;
-	float		flight_time;
-	int			is_grounded;
-	int			can_move;
-} RigidbodyComponent;
+} ECFriction;
 
-typedef struct ControllerComponent {
-	entity_id	e_id;
-} ControllerComponent;
+typedef struct ECSpeed {
+	ECBase*		base;
+	Vector2		current_speed;
+	Vector2		max_speed;
+} ECSpeed;
 
-typedef struct CollisionInfo {
-	int			is_colliding_up;
-	int			is_colliding_left;
-	int			is_colliding_down;
-	int			is_colliding_right;
-} CollisionInfo;
+typedef struct ECGravity {
+	ECBase*		base;
+	float		air_time;
+	float		gravity_acceleration;
+} ECGravity;
 
-typedef struct BoxCollider {
-	entity_id		e_id;
+typedef struct ECBoxCollider {
+	ECBase*			base;
+	PhysicsBody*	body;
+	int				is_grounded;
 	float			width;
 	float			height;
-	CollisionInfo	collision_info;
-} BoxCollider;
+} ECBoxCollider;

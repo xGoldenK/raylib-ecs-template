@@ -10,5 +10,3 @@
 // entities don't actually exist as a type; they're just a way to link different components to the same "object"
 entity_id CreateEntity();
 void DestroyEntity(entity_id e_id);
-
-void DrawEntityCollider(entity_id e_id);

@@ -2,12 +2,12 @@
 #include "raygui.h"
 
 //--------------------------------------------------------------------------------------
-// global variables definition
+// global variables declaration
 //--------------------------------------------------------------------------------------
-int		screen_width			= 800;
-int		screen_height			= 450;
-Screen	current_screen			= LOGO;
-bool	should_quit_application = false;
+int		screen_width;
+int		screen_height;
+int		should_quit_application;
+Screen	current_screen;
 
 //--------------------------------------------------------------------------------------
 // function definition

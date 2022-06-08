@@ -9,6 +9,14 @@
 void GameLoop(void);
 
 //--------------------------------------------------------------------------------------
+// declare variables used by multiple files
+//--------------------------------------------------------------------------------------
+int		screen_width = 800;
+int		screen_height = 450;
+int	    should_quit_application;
+Screen	current_screen;
+
+//--------------------------------------------------------------------------------------
 // main function
 //--------------------------------------------------------------------------------------
 int main() {
@@ -16,16 +24,20 @@ int main() {
     // initialize
     //--------------------------------------------------------------------------------------
 
-    // init the uuid library
+    // initialize the uuid library
     uuid4_init();
 
-    // init raylib
+    // initialize raylib
     InitWindow(screen_width, screen_height, "platformer");
     SetTargetFPS(60);
 
     //--------------------------------------------------------------------------------------
     // main loop
     //--------------------------------------------------------------------------------------
+
+    // set the first screen of the game
+    // and call its init method
+    SetScreen(LOGO);
 
     // WindowShouldClose() checks whether the escape key or the close button are pressed;
     // shouldExitApplication is used to determine when we want to close the application;

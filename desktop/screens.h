@@ -10,14 +10,6 @@
 typedef enum Screen { LOGO, ALFA } Screen;
 
 //--------------------------------------------------------------------------------------
-// declare variables used by multiple files
-//--------------------------------------------------------------------------------------
-int		screen_width;
-int		screen_height;
-Screen	current_screen;
-bool	should_quit_application;
-
-//--------------------------------------------------------------------------------------
 // drawing utilities
 //--------------------------------------------------------------------------------------
 bool DrawCenteredButton		(char* text, int height_margin);
