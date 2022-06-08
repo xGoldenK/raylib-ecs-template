@@ -6,45 +6,59 @@
 #define MAX_COMPONENTS 100
 #define COMPONENT_TYPES_LENGHT 7
 
-// array of every component's type
-ComponentArray arrays[COMPONENT_TYPES_LENGHT];
-
+//--------------------------------------------------------------------------------------
+// macros
+//--------------------------------------------------------------------------------------
 // create component for an entity
 // component_struct: the component's struct
+// component_type: the component's id (ComponentType enum)
 // entity: the id of the entity
 // "returns": the memory address of the new component
-#define AddComponent(entity, component_struct, component_type)\
-	&(component_struct){ .base = { .e_id = entity, .type = component_type } };\
+#define CreateComponent(entity_id, component_struct, component_type)\
+	&(component_struct){ .base = { .e_id = entity_id, .c_type = component_type } }\
+
+// get all the components of a specific type
+// component_struct: the component's struct
+// component_type: the component's id (ComponentType enum)
+// "returns": the list of components as a pointer
+#define GetComponents(component_type)\
+	GetComponentArray(component_type).buffer\
+
+// get the first_free_space_index of a specific component array
+// component_struct: the component's struct
+// component_type: the component's id (ComponentType enum)
+// "returns": the first_free_space_index int
+#define GetComponentArrayFreeSpaceIndex(component_type)\
+	GetComponentArray(component_type).first_free_space_index\
+
+// get a component array struct of the given component type
+#define GetComponentArray(component_type)\
+	component_arrays[component_type]\
 
 // store a component in the respective component array
 // component_struct: the component's struct
-// component: the component we want to store
+// component: the pointer to the component we want to store
 // index: the index of the component's type (use ComponentType enum)
-#define StoreComponent(component, component_struct, component_type){\
+#define StoreComponent(p_component, component_struct){\
+	/* get the component type */ \
+	int type = p_component->base.c_type;\
 	/* cast the correct component type to the generic void* buffer of the array */ \
-	component_struct* components_of_type = (component_struct*) arrays[component_type].buffer;\
+	component_struct* components_of_type = GetComponents(type);\
 	/* set the first free space of the buffer to the component we want to store */ \
-	*(components_of_type + arrays[component_type].first_free_space_index) = *component;\
+	/* we use pointers since they're basically the same as arrays */ \
+	*(components_of_type + component_arrays[type].first_free_space_index) = *(p_component);\
 	/* update the new first free space index */ \
-	arrays[component_type].first_free_space_index += 1;\
+	component_arrays[type].first_free_space_index += 1;\
 }
 
-#define GetComponentSizeFromType(component_type) {\
-	
-}\
-
-// allocate the space needed by the component arrays
-void InitializeComponentArrays();
+//--------------------------------------------------------------------------------------
+// global variables
+//--------------------------------------------------------------------------------------
+// arrays of every component's type
+ComponentArray component_arrays[COMPONENT_TYPES_LENGHT];
 
 //--------------------------------------------------------------------------------------
 // global functions declaration
 //--------------------------------------------------------------------------------------
-//void		RequireComponents		(entity_id e_id, ComponentType component_type);
-//bool		EntityHasComponent		(entity_id e_id, ComponentType type);
-//void*		GetEntityComponent		(entity_id e_id, ComponentType type);
-
-// try and implement this first, the rest come from GetComponents
-//void*		GetComponents			(ComponentType type);				//NOTE: this function returns a pointer! (correct usage: DrawComponent* d = ...)
-//void*		GetComponentAtIndex		(int index, ComponentType type);
-//entity_id	GetEntityId				(int index, ComponentType type);
-//int		GetComponentArrayLenght	(ComponentType type);
+// allocate the space needed by the component arrays
+void InitializeComponentArrays();

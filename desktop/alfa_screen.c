@@ -8,21 +8,35 @@
 // local variable declaration
 //--------------------------------------------------------------------------------------
 entity_id character;
+entity_id character2;
 
 void InitAlfaScreen() {
 	InitializeComponentArrays();
 
 	character = CreateEntity();
+	character2 = CreateEntity();
 
 	TraceLog(LOG_INFO, "character is %s", character);
-	ECSpeed* c = AddComponent(character, ECSpeed);
+	ECSpeed* c = CreateComponent(character, ECSpeed, SPEED);
+	ECSpeed* c2 = CreateComponent(character2, ECSpeed, SPEED);
 
-	StoreComponent(c, SPEED, ECSpeed);
-	StoreComponent(c, SPEED, ECSpeed);
+	StoreComponent(c, ECSpeed);
+	StoreComponent(c2, ECSpeed);
 
-	ECSpeed* speed_components = (ECSpeed*) arrays[SPEED].buffer;
-	TraceLog(LOG_INFO, "array id is %s", (speed_components + 1)->e_id);
-	TraceLog(LOG_INFO, "array id is %s", (speed_components)->e_id);
+	ComponentArray comp_array = GetComponentArray(SPEED);
+	TraceLog(LOG_INFO, "capacity is %i", comp_array.capacity);
+	TraceLog(LOG_INFO, "first free space index is %i", GetComponentArrayFreeSpaceIndex(SPEED));
+
+	/*ECSpeed* speed_components = (ECSpeed*) component_arrays[SPEED].buffer;*/
+	//TraceLog(LOG_INFO, "array id is %s", (speed_components + 1)->base.e_id);
+	//TraceLog(LOG_INFO, "array id is %s", (speed_components)->base.e_id);*/
+
+	ECSpeed* speed_components = GetComponents(SPEED);
+	TraceLog(LOG_INFO, "array id is %s", (speed_components)->base.e_id);
+	TraceLog(LOG_INFO, "array id is %s", (speed_components + 1)->base.e_id);
+
+	TraceLog(LOG_INFO, "character2 is %s", character2);
+
 }
 
 void UpdateAlfaScreen() {

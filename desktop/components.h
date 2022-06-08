@@ -7,7 +7,6 @@
 //--------------------------------------------------------------------------------------
 // types and structure definition
 //--------------------------------------------------------------------------------------
-// TODO: remove this enum
 typedef enum ComponentType {
 	POSITION, DRAW, CONTROLLABLE, FRICTION, SPEED,
 	GRAVITY, BOX_COLLIDER
@@ -22,45 +21,45 @@ typedef struct ComponentArray {
 
 typedef struct ECBase {
 	entity_id		e_id;
-	ComponentType	type;
+	ComponentType	c_type;
 } ECBase;
 
 typedef struct ECPosition {
-	ECBase*		base;
+	ECBase		base;
 	float		x;
 	float		y;
 } ECPosition;
 
 typedef struct ECDraw {
-	ECBase*		base;
+	ECBase		base;
 	Texture2D	texture;
 } ECDraw;
 
 typedef struct ECControllable {
-	ECBase*		base;
+	ECBase		base;
 } ECControllable;
 
 typedef struct ECFriction {
-	ECBase*		base;
+	ECBase		base;
 	float		max_friction;
 	float		current_friction;
 } ECFriction;
 
 typedef struct ECSpeed {
-	ECBase*		base;
+	ECBase		base;
 	Vector2		current_speed;
 	Vector2		max_speed;
 } ECSpeed;
 
 typedef struct ECGravity {
-	ECBase*		base;
+	ECBase		base;
 	float		air_time;
 	float		gravity_acceleration;
 } ECGravity;
 
 typedef struct ECBoxCollider {
-	ECBase*			base;
-	PhysicsBody*	body;
+	ECBase			base;
+	PhysicsBody		body;
 	int				is_grounded;
 	float			width;
 	float			height;
