@@ -18,27 +18,26 @@
 	&(component_struct){ .base = { .e_id = entity_id, .c_type = component_type } }\
 
 // get all the components of a specific type
-// component_struct: the component's struct
 // component_type: the component's id (ComponentType enum)
 // "returns": the list of components as a pointer
 #define GetComponents(component_type)\
 	GetComponentArray(component_type).buffer\
 
 // get the first_free_space_index of a specific component array
-// component_struct: the component's struct
 // component_type: the component's id (ComponentType enum)
 // "returns": the first_free_space_index int
 #define GetComponentArrayFreeSpaceIndex(component_type)\
 	GetComponentArray(component_type).first_free_space_index\
 
 // get a component array struct of the given component type
+// component_type: the component's id (ComponentType enum)
+// "returns": the component array struct of the given component type
 #define GetComponentArray(component_type)\
 	component_arrays[component_type]\
 
 // store a component in the respective component array
 // component_struct: the component's struct
-// component: the pointer to the component we want to store
-// index: the index of the component's type (use ComponentType enum)
+// p_component: the pointer to the component we want to store
 #define StoreComponent(p_component, component_struct){\
 	/* get the component type */ \
 	int type = p_component->base.c_type;\
