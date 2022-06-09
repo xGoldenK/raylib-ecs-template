@@ -6,22 +6,10 @@
 //--------------------------------------------------------------------------------------
 // local variables
 //--------------------------------------------------------------------------------------
-int GetComponentSizeFromType(int index) {
-	switch(index) {
-	case POSITION:		return sizeof(ECPosition);
-	case DRAW:			return sizeof(ECDraw);
-	case CONTROLLABLE:	return sizeof(ECControllable);
-	case FRICTION:		return sizeof(ECFriction);
-	case SPEED:			return sizeof(ECSpeed);
-	case GRAVITY:		return sizeof(ECGravity);
-	case BOX_COLLIDER:	return sizeof(ECBoxCollider);
-	}
-}
-
 void InitializeComponentLists() {
 	// fill the arrays with the respective initialized structs
 	for(int i = 0; i < COMPONENT_TYPES_LENGHT; i++) {
-		int component_size = GetComponentSizeFromType(i);
+		int component_size = GET_COMPONENT_SIZE(i);
 
 		component_lists[i] = (ComponentList){
 			.buffer = malloc(component_size * MAX_COMPONENTS),

@@ -3,25 +3,21 @@
 #include "raylib.h"
 #include "entity.h"
 #include "physac.h"
+#include "stdlib.h"
+
+#define MAX_COMPONENTS 100
+#define COMPONENT_TYPES_LENGHT 7
 
 //--------------------------------------------------------------------------------------
 // types and structure definition
 //--------------------------------------------------------------------------------------
+// component types
 typedef enum ComponentType {
 	POSITION, DRAW, CONTROLLABLE, FRICTION, SPEED,
 	GRAVITY, BOX_COLLIDER
 } ComponentType;
 
-typedef struct ComponentDictionary {
-	int*			type_keys;
-	ComponentEntry* component_values;
-} ComponentDictionary;
-
-typedef struct ComponentEntry {
-	void* component_struct;
-	int	  component_struct_size;
-} ComponentEntry;
-
+// component data types
 typedef struct ComponentList {
 	void* buffer;
 	int capacity;
@@ -29,7 +25,12 @@ typedef struct ComponentList {
 	int first_free_space_index;
 } ComponentList;
 
+typedef struct ComponentIdentifier {
+	int c_size;
+	int c_type;
+} ComponentIdentifier;
 
+// actual components
 typedef struct ECBase {
 	entity_id		e_id;
 	ComponentType	c_type;
