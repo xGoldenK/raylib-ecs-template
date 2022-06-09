@@ -13,6 +13,14 @@ entity_id character;
 entity_id character2;
 
 void InitAlfaScreen() {
+	REGISTER_COMPONENT(ECPosition,		POSITION);
+	REGISTER_COMPONENT(ECDraw,			DRAW);
+	REGISTER_COMPONENT(ECControllable,	CONTROLLABLE);
+	REGISTER_COMPONENT(ECFriction,		FRICTION);
+	REGISTER_COMPONENT(ECSpeed,			SPEED);
+	REGISTER_COMPONENT(ECGravity,		GRAVITY);
+	REGISTER_COMPONENT(ECBoxCollider,	BOX_COLLIDER);
+
 	InitializeComponentLists();
 
 	for(int i = 0; i < 10; i++) {

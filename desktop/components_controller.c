@@ -11,6 +11,14 @@ void InitializeComponentLists() {
 	for(int i = 0; i < COMPONENT_TYPES_LENGHT; i++) {
 		int component_size = GET_COMPONENT_SIZE(i);
 
+		// if the component size is 0, it means that we did not register it using the REGISTER_COMPONENT macro
+		if(component_size == 0) {
+			TraceLog(LOG_ERROR, "A component has not been registered correctly!");
+			TraceLog(LOG_ERROR, "The component's type is %i", i);
+			continue;
+		}
+
+		// fill our current list
 		component_lists[i] = (ComponentList){
 			.buffer = malloc(component_size * MAX_COMPONENTS),
 			.capacity = MAX_COMPONENTS,

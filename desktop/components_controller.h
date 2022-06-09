@@ -1,10 +1,9 @@
 #pragma once
 
 #include "components.h"
-#include "entity.h"
 
 //--------------------------------------------------------------------------------------
-// macros (remember to use InitializeComponentLists())
+// macros
 //--------------------------------------------------------------------------------------
 // registers a component in the component identifier list
 // component_struct: the component's struct
