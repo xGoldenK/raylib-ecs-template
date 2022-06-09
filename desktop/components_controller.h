@@ -17,47 +17,47 @@
 #define CreateComponent(entity_id, component_struct, component_type)\
 	&(component_struct){ .base = { .e_id = entity_id, .c_type = component_type } }\
 
-// get all the components of a specific type
-// component_type: the component's id (ComponentType enum)
-// "returns": the list of components as a pointer
-#define GetComponents(component_type)\
-	GetComponentArray(component_type).buffer\
-
-// get the first_free_space_index of a specific component array
-// component_type: the component's id (ComponentType enum)
-// "returns": the first_free_space_index int
-#define GetComponentArrayFreeSpaceIndex(component_type)\
-	GetComponentArray(component_type).first_free_space_index\
-
-// get a component array struct of the given component type
-// component_type: the component's id (ComponentType enum)
-// "returns": the component array struct of the given component type
-#define GetComponentArray(component_type)\
-	component_arrays[component_type]\
-
-// store a component in the respective component array
+// store a component in the respective component list
 // component_struct: the component's struct
 // p_component: the pointer to the component we want to store
 #define StoreComponent(p_component, component_struct){\
 	/* get the component type */ \
 	int type = p_component->base.c_type;\
-	/* cast the correct component type to the generic void* buffer of the array */ \
+	/* cast the correct component type to the generic component buffer */ \
 	component_struct* components_of_type = GetComponents(type);\
 	/* set the first free space of the buffer to the component we want to store */ \
 	/* we use pointers since they're basically the same as arrays */ \
-	*(components_of_type + component_arrays[type].first_free_space_index) = *(p_component);\
+	*(components_of_type + component_lists[type].first_free_space_index) = *(p_component);\
 	/* update the new first free space index */ \
-	component_arrays[type].first_free_space_index += 1;\
+	component_lists[type].first_free_space_index += 1;\
 }
+
+// get all the components of a specific type
+// component_type: the component's id (ComponentType enum)
+// "returns": the list of components as a void*
+#define GetComponents(component_type)\
+	GetComponentList(component_type).buffer\
+
+// get the first_free_space_index of a specific component list
+// component_type: the component's id (ComponentType enum)
+// "returns": the first_free_space_index int
+#define GetComponentListFreeSpaceIndex(component_type)\
+	GetComponentList(component_type).first_free_space_index\
+
+// get a component list struct of the given component type
+// component_type: the component's id (ComponentType enum)
+// "returns": the component list struct of the given component type
+#define GetComponentList(component_type)\
+	component_lists[component_type]\
 
 //--------------------------------------------------------------------------------------
 // global variables
 //--------------------------------------------------------------------------------------
 // arrays of every component's type
-ComponentArray component_arrays[COMPONENT_TYPES_LENGHT];
+ComponentList component_lists[COMPONENT_TYPES_LENGHT];
 
 //--------------------------------------------------------------------------------------
 // global functions declaration
 //--------------------------------------------------------------------------------------
 // allocate the space needed by the component arrays
-void InitializeComponentArrays();
+void InitializeComponentLists();

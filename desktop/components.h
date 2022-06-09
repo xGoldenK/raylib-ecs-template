@@ -12,12 +12,23 @@ typedef enum ComponentType {
 	GRAVITY, BOX_COLLIDER
 } ComponentType;
 
-typedef struct ComponentArray {
+typedef struct ComponentDictionary {
+	int*			type_keys;
+	ComponentEntry* component_values;
+} ComponentDictionary;
+
+typedef struct ComponentEntry {
+	void* component_struct;
+	int	  component_struct_size;
+} ComponentEntry;
+
+typedef struct ComponentList {
 	void* buffer;
 	int capacity;
 	int single_component_size;
 	int first_free_space_index;
-} ComponentArray;
+} ComponentList;
+
 
 typedef struct ECBase {
 	entity_id		e_id;

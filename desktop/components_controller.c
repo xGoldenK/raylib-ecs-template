@@ -18,12 +18,12 @@ int GetComponentSizeFromType(int index) {
 	}
 }
 
-void InitializeComponentArrays() {
+void InitializeComponentLists() {
 	// fill the arrays with the respective initialized structs
 	for(int i = 0; i < COMPONENT_TYPES_LENGHT; i++) {
 		int component_size = GetComponentSizeFromType(i);
 
-		component_arrays[i] = (ComponentArray){
+		component_lists[i] = (ComponentList){
 			.buffer = malloc(component_size * MAX_COMPONENTS),
 			.capacity = MAX_COMPONENTS,
 			.single_component_size = component_size,
@@ -33,7 +33,7 @@ void InitializeComponentArrays() {
 
 	// check if the arrays have been correctly initialized
 	// (might not be the best solution to check that)
-	if((component_arrays[0].single_component_size) == 0) {
+	if((component_lists[0].single_component_size) == 0) {
 		TraceLog(LOG_ERROR, "Single component size for the 0th component array is 0!");
 		TraceLog(LOG_ERROR, "This probably means that the component arrays HAVE NOT been initialized!!");
 	}

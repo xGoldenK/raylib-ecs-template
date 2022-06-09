@@ -11,31 +11,20 @@ entity_id character;
 entity_id character2;
 
 void InitAlfaScreen() {
-	InitializeComponentArrays();
+	InitializeComponentLists();
 
-	character = CreateEntity();
-	character2 = CreateEntity();
-
-	TraceLog(LOG_INFO, "character is %s", character);
-	ECSpeed* c = CreateComponent(character, ECSpeed, SPEED);
-	ECSpeed* c2 = CreateComponent(character2, ECSpeed, SPEED);
-
-	StoreComponent(c, ECSpeed);
-	StoreComponent(c2, ECSpeed);
-
-	ComponentArray comp_array = GetComponentArray(SPEED);
-	TraceLog(LOG_INFO, "capacity is %i", comp_array.capacity);
-	TraceLog(LOG_INFO, "first free space index is %i", GetComponentArrayFreeSpaceIndex(SPEED));
-
-	/*ECSpeed* speed_components = (ECSpeed*) component_arrays[SPEED].buffer;*/
-	//TraceLog(LOG_INFO, "array id is %s", (speed_components + 1)->base.e_id);
-	//TraceLog(LOG_INFO, "array id is %s", (speed_components)->base.e_id);*/
+	for(int i = 0; i < 10; i++) {
+		entity_id e_id = CreateEntity();
+		ECSpeed* c = CreateComponent(e_id, ECSpeed, SPEED);
+		StoreComponent(c, ECSpeed);
+	}
 
 	ECSpeed* speed_components = GetComponents(SPEED);
-	TraceLog(LOG_INFO, "array id is %s", (speed_components)->base.e_id);
-	TraceLog(LOG_INFO, "array id is %s", (speed_components + 1)->base.e_id);
 
-	TraceLog(LOG_INFO, "character2 is %s", character2);
+	for(int i = 0; i < GetComponentListFreeSpaceIndex(SPEED); i++) {
+		TraceLog(LOG_INFO, "Logging the %i th component", i);
+		TraceLog(LOG_INFO, "component's entity id is %s", (((ECSpeed*)(GetComponents(SPEED))) + i)->base.e_id);
+	}
 
 }
 
@@ -50,4 +39,9 @@ void DrawAlfaScreen() {
 void DisposeAlfaScreen() {
 	// NOTE: add dispose methods for components/entities
 	// https://prdeving.wordpress.com/2018/06/27/videogames-programming-ecs-system-in-plain-c/
+}
+
+ComponentDictionary dictionary
+void RegisterComponents() {
+
 }
