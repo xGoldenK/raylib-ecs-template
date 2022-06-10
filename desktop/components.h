@@ -17,7 +17,9 @@ typedef enum ComponentType {
 	GRAVITY, BOX_COLLIDER
 } ComponentType;
 
-// component data types
+// component list
+// holds important information about a component type and the array of its components
+// as a void* buffer
 typedef struct ComponentList {
 	void* buffer;
 	int capacity;
@@ -25,17 +27,14 @@ typedef struct ComponentList {
 	int first_free_space_index;
 } ComponentList;
 
-typedef struct ComponentIdentifier {
-	int c_size;
-	int c_type;
-} ComponentIdentifier;
-
-// actual components
+// base component
 typedef struct ECBase {
 	entity_id		e_id;
 	ComponentType	c_type;
 } ECBase;
 
+// actual components
+// registration is required using the REGISTER_COMPONENT macro
 typedef struct ECPosition {
 	ECBase		base;
 	float		x;

@@ -21,13 +21,13 @@ void InitAlfaScreen() {
 	REGISTER_COMPONENT(ECGravity,		GRAVITY);
 	REGISTER_COMPONENT(ECBoxCollider,	BOX_COLLIDER);
 
-	InitializeComponentLists();
-
 	for(int i = 0; i < 10; i++) {
 		entity_id e_id = CreateEntity();
 		ECSpeed* c = CREATE_COMPONENT(e_id, ECSpeed, SPEED);
 		STORE_COMPONENT(c, ECSpeed);
 	}
+
+	TraceLog(LOG_INFO, "position isze is %i", sizeof(ECDraw));
 
 	ECSpeed* speed_components = GET_COMPONENTS(SPEED);
 

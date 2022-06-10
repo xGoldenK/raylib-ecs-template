@@ -9,8 +9,13 @@
 // component_struct: the component's struct
 // component_type: the component's id (ComponentType enum)
 #define REGISTER_COMPONENT(component_struct, component_type) {\
-	components_ids[component_type].c_size = sizeof(component_struct);\
-	components_ids[component_type].c_type = component_type;\
+	int component_size = sizeof(component_struct);\
+	component_lists[component_type] = (ComponentList){\
+			.buffer = malloc(component_size * MAX_COMPONENTS),\
+			.capacity = MAX_COMPONENTS,\
+			.single_component_size = component_size,\
+			.first_free_space_index = 0,\
+		}; \
 }\
 
 // gets the size of a component struct's using its type
@@ -64,11 +69,8 @@
 // global variables
 //--------------------------------------------------------------------------------------
 // arrays of every component's type
-ComponentIdentifier components_ids [COMPONENT_TYPES_LENGHT];
 ComponentList		component_lists[COMPONENT_TYPES_LENGHT];
 
 //--------------------------------------------------------------------------------------
 // global functions declaration
 //--------------------------------------------------------------------------------------
-// allocate the space needed by the component arrays
-void InitializeComponentLists();
