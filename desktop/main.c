@@ -1,7 +1,11 @@
 #include "main.h"
 #include "raylib.h"
-#include "uuid4.h"
 #include "screens.h"
+
+#include "components.h"
+#include "components_controller.h"
+
+#include "uuid4.h"
 
 //--------------------------------------------------------------------------------------
 // forward declare functions
@@ -24,6 +28,15 @@ int main() {
     // initialize
     //--------------------------------------------------------------------------------------
 
+    // register the default components
+    REGISTER_COMPONENT(ECPosition, POSITION);
+    REGISTER_COMPONENT(ECDraw, DRAW);
+    REGISTER_COMPONENT(ECControllable, CONTROLLABLE);
+    REGISTER_COMPONENT(ECFriction, FRICTION);
+    REGISTER_COMPONENT(ECGravity, GRAVITY);
+    REGISTER_COMPONENT(ECBoxCollider, BOX_COLLIDER);
+    REGISTER_COMPONENT(ECSpeed, SPEED);
+
     // initialize the uuid library
     uuid4_init();
 
@@ -34,7 +47,6 @@ int main() {
     //--------------------------------------------------------------------------------------
     // main loop
     //--------------------------------------------------------------------------------------
-
     // set the first screen of the game
     // and call its init method
     SetScreen(LOGO);

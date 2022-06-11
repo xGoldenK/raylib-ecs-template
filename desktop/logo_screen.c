@@ -1,6 +1,9 @@
 #include "raygui.h"
 #include "screens.h"
 
+#include "components.h"
+#include "components_controller.h"
+
 //--------------------------------------------------------------------------------------
 // declare local variables
 //--------------------------------------------------------------------------------------

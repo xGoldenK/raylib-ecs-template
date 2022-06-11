@@ -2,27 +2,24 @@
 
 #include "components.h"
 
+#include "stdlib.h"
+
 //--------------------------------------------------------------------------------------
 // macros
 //--------------------------------------------------------------------------------------
 // registers a component in the component identifier list
+// this is required before using any macro for that component type in this file
 // component_struct: the component's struct
 // component_type: the component's id (ComponentType enum)
 #define REGISTER_COMPONENT(component_struct, component_type) {\
-	int component_size = sizeof(component_struct);\
+	int c_size = sizeof(component_struct);\
 	component_lists[component_type] = (ComponentList){\
-			.buffer = malloc(component_size * MAX_COMPONENTS),\
-			.capacity = MAX_COMPONENTS,\
-			.single_component_size = component_size,\
+			.buffer = malloc(c_size * MAX_COMPONENTS),\
+			.max_components = MAX_COMPONENTS,\
+			.component_size = c_size,\
 			.first_free_space_index = 0,\
 		}; \
 }\
-
-// gets the size of a component struct's using its type
-// component_struct: the component's struct
-// "returns": the size of the component
-#define GET_COMPONENT_SIZE(component_type)\
-	components_ids[component_type].c_size\
 
 // create component for an entity
 // component_struct: the component's struct
@@ -47,6 +44,18 @@
 	component_lists[type].first_free_space_index += 1;\
 }
 
+// get a component list struct of the given component type
+// component_type: the component's id (ComponentType enum)
+// "returns": the component list struct of the given component type
+#define GET_COMPONENT_LIST(component_type)\
+	component_lists[component_type]\
+
+// gets the size of a component struct's using its type
+// component_type: the component's id (ComponentType enum)
+// "returns": the size of the component
+#define GET_COMPONENT_SIZE(component_type)\
+	component_lists[component_type].component_size\
+
 // get all the components of a specific type
 // component_type: the component's id (ComponentType enum)
 // "returns": the list of components as a void*
@@ -58,12 +67,6 @@
 // "returns": the first_free_space_index int
 #define GET_COMPONENT_LIST_FREE_SPACE_INDEX(component_type)\
 	GET_COMPONENT_LIST(component_type).first_free_space_index\
-
-// get a component list struct of the given component type
-// component_type: the component's id (ComponentType enum)
-// "returns": the component list struct of the given component type
-#define GET_COMPONENT_LIST(component_type)\
-	component_lists[component_type]\
 
 //--------------------------------------------------------------------------------------
 // global variables

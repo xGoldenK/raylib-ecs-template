@@ -21,10 +21,10 @@ typedef enum ComponentType {
 // holds important information about a component type and the array of its components
 // as a void* buffer
 typedef struct ComponentList {
-	void* buffer;
-	int capacity;
-	int single_component_size;
-	int first_free_space_index;
+	void*	buffer;
+	int		max_components;
+	int		first_free_space_index;
+	size_t	component_size;
 } ComponentList;
 
 // base component
